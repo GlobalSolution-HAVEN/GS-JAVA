@@ -2,11 +2,9 @@ FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 
 COPY pom.xml .
-RUN mvn -q -e -B dependency:go-offline
-
 COPY src ./src
 
-RUN mvn -q -e -B package -DskipTests
+RUN mvn clean package -DskipTests -Dquarkus.package.type=uber-jar
 
 FROM eclipse-temurin:17-jre
 WORKDIR /work
