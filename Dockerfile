@@ -4,7 +4,7 @@ WORKDIR /workspace
 COPY pom.xml .
 COPY src ./src
 
-RUN mvn clean package -DskipTests -Dquarkus.package.type=uber-jar
+RUN mvn -q -e -B clean package -DskipTests
 
 FROM eclipse-temurin:17-jre
 WORKDIR /work
