@@ -1,10 +1,12 @@
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 
-COPY code-with-quarkus-haven-api .
 COPY pom.xml .
+RUN mvn -q -e -B dependency:go-offline
+
 COPY src ./src
-RUN mvn -B -q package -DskipTests
+
+RUN mvn -q -e -B package -DskipTests
 
 FROM eclipse-temurin:17-jre
 WORKDIR /work
@@ -12,4 +14,5 @@ WORKDIR /work
 COPY --from=build /workspace/target/quarkus-app/ ./
 
 EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "quarkus-run.jar"]
