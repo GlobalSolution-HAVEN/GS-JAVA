@@ -1,18 +1,20 @@
 package org.example.DAO;
 
-import org.example.Conexao.Conexao;
+import jakarta.inject.Inject;
 import org.example.Model.Conteudo;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConteudoDAO {
-
+@Inject
+    DataSource dataSource;
     public void create(Conteudo c) throws SQLException {
         String sql = "INSERT INTO conteudo (id, titulo, tipo, categoria, url, duracao_segundos, dificuldade, foco, idioma, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, c.getId());
@@ -34,7 +36,7 @@ public class ConteudoDAO {
         List<Conteudo> lista = new ArrayList<>();
         String sql = "SELECT * FROM conteudo";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -60,7 +62,7 @@ public class ConteudoDAO {
     public void update(Conteudo c) throws SQLException {
         String sql = "UPDATE conteudo SET titulo = ?, tipo = ?, categoria = ?, url = ?, duracao_segundos = ?, dificuldade = ?, foco = ?, idioma = ?, ativo = ? WHERE id = ?";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, c.getTitulo());
@@ -81,7 +83,7 @@ public class ConteudoDAO {
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM conteudo WHERE id = ?";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -93,7 +95,7 @@ public class ConteudoDAO {
         List<Conteudo> lista = new ArrayList<>();
         String sql = "SELECT * FROM conteudo WHERE LOWER(categoria) LIKE ?";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, "%" + categoria.toLowerCase() + "%");
