@@ -1,18 +1,20 @@
 package org.example.DAO;
 
-import org.example.Conexao.Conexao;
+import jakarta.inject.Inject;
 import org.example.Model.Humor;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HumorDAO {
-
+@Inject
+    DataSource dataSource;
     public void create(Humor h) throws SQLException {
         String sql = "INSERT INTO humor (id, id_usuario, nivel_humor, nivel_energia, sentimento, observacao, data_registro, periodo_dia, origem_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, h.getId());
@@ -33,7 +35,7 @@ public class HumorDAO {
         List<Humor> lista = new ArrayList<>();
         String sql = "SELECT * FROM humor";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -58,7 +60,7 @@ public class HumorDAO {
     public void update(Humor h) throws SQLException {
         String sql = "UPDATE humor SET id_usuario = ?, nivel_humor = ?, nivel_energia = ?, sentimento = ?, observacao = ?, data_registro = ?, periodo_dia = ?, origem_registro = ? WHERE id = ?";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, h.getIdUsuario());
@@ -78,7 +80,7 @@ public class HumorDAO {
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM humor WHERE id = ?";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -90,7 +92,7 @@ public class HumorDAO {
         List<Humor> lista = new ArrayList<>();
         String sql = "SELECT * FROM humor WHERE LOWER(sentimento) LIKE ?";
 
-        try (Connection conn = Conexao.recuperaConexao();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, "%" + sentimento.toLowerCase() + "%");
